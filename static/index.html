@@ -7,350 +7,91 @@
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    background: #000;
-    min-height: 100vh;
-    font-family: 'Share Tech Mono', monospace;
-    color: #00c8ff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,200,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,200,255,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-  }
-
+  body { background: #000; min-height: 100vh; font-family: 'Share Tech Mono', monospace; color: #00c8ff; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,200,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,255,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; }
   .corner { position: fixed; width: 28px; height: 28px; opacity: 0.2; }
   .corner-tl { top: 14px; left: 14px; border-top: 1px solid #00c8ff; border-left: 1px solid #00c8ff; }
   .corner-tr { top: 14px; right: 14px; border-top: 1px solid #00c8ff; border-right: 1px solid #00c8ff; }
   .corner-bl { bottom: 14px; left: 14px; border-bottom: 1px solid #00c8ff; border-left: 1px solid #00c8ff; }
   .corner-br { bottom: 14px; right: 14px; border-bottom: 1px solid #00c8ff; border-right: 1px solid #00c8ff; }
-
-  .top-bar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 24px;
-    border-bottom: 1px solid rgba(0,200,255,0.06);
-  }
-
-  .brand {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    letter-spacing: 6px;
-    color: rgba(0,200,255,0.6);
-  }
-
-  .status-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #ffaa00;
-    box-shadow: 0 0 6px #ffaa00;
-    transition: all 0.3s;
-  }
+  .top-bar { position: fixed; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; border-bottom: 1px solid rgba(0,200,255,0.06); }
+  .brand { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 500; letter-spacing: 6px; color: rgba(0,200,255,0.6); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #ffaa00; box-shadow: 0 0 6px #ffaa00; transition: all 0.3s; }
   .status-dot.ready { background: #00ff88; box-shadow: 0 0 6px #00ff88; }
-  .status-dot.listening { background: #00ff88; box-shadow: 0 0 10px #00ff88; animation: pulse-dot 0.8s infinite; }
-  .status-dot.thinking { background: #4488ff; box-shadow: 0 0 8px #4488ff; animation: pulse-dot 1s infinite; }
-  .status-dot.speaking { background: #00c8ff; box-shadow: 0 0 10px #00c8ff; animation: pulse-dot 0.6s infinite; }
-
-  @keyframes pulse-dot { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
-
-  .clock {
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: rgba(0,200,255,0.3);
-  }
-
-  /* ORB */
-  .orb-wrapper {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    margin-bottom: 40px;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .ring {
-    position: absolute;
-    border-radius: 50%;
-    border: 1px solid rgba(0,200,255,0.12);
-    top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    animation: ring-pulse 3s ease-in-out infinite;
-    transition: all 0.4s;
-  }
-  .ring-1 { width: 240px; height: 240px; }
-  .ring-2 { width: 280px; height: 280px; animation-delay: 0.5s; border-color: rgba(0,200,255,0.07); }
-  .ring-3 { width: 320px; height: 320px; animation-delay: 1s; border-color: rgba(0,200,255,0.04); }
-
-  @keyframes ring-pulse {
-    0%,100% { opacity: 0.3; transform: translate(-50%,-50%) scale(1); }
-    50% { opacity: 0.8; transform: translate(-50%,-50%) scale(1.02); }
-  }
-
-  .orb {
-    position: absolute;
-    width: 180px; height: 180px;
-    border-radius: 50%;
-    top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    background: radial-gradient(circle at 35% 35%,
-      rgba(0,220,255,0.4) 0%, rgba(0,150,200,0.2) 30%,
-      rgba(0,50,100,0.8) 65%, rgba(0,10,30,0.95) 100%);
-    box-shadow:
-      0 0 40px rgba(0,200,255,0.3),
-      0 0 80px rgba(0,200,255,0.15),
-      inset 0 0 40px rgba(0,200,255,0.1);
-    border: 1px solid rgba(0,200,255,0.4);
-    transition: all 0.4s ease;
-    animation: orb-breathe 4s ease-in-out infinite;
-    overflow: hidden;
-  }
-
-  .orb::before {
-    content: '';
-    position: absolute;
-    width: 60%; height: 40%;
-    background: radial-gradient(ellipse, rgba(255,255,255,0.15) 0%, transparent 70%);
-    top: 15%; left: 15%;
-    border-radius: 50%;
-    filter: blur(8px);
-  }
-
-  .orb::after {
-    content: '';
-    position: absolute;
-    inset: -50%;
-    background: conic-gradient(from 0deg,
-      transparent 0deg, rgba(0,200,255,0.1) 60deg,
-      transparent 120deg, rgba(0,150,255,0.05) 180deg,
-      transparent 240deg, rgba(0,200,255,0.08) 300deg,
-      transparent 360deg);
-    animation: orb-spin 8s linear infinite;
-    border-radius: 50%;
-  }
-
-  @keyframes orb-breathe {
-    0%,100% { transform: translate(-50%,-50%) scale(1); }
-    50% { transform: translate(-50%,-50%) scale(1.04); }
-  }
-  @keyframes orb-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-  /* Wave bars inside orb when speaking */
-  .wave-container {
-    position: absolute;
-    bottom: 35%; left: 50%;
-    transform: translateX(-50%);
-    display: flex; align-items: center; gap: 3px;
-    opacity: 0; transition: opacity 0.3s; z-index: 10;
-  }
-  .wave-bar {
-    width: 3px; background: rgba(0,220,255,0.9);
-    border-radius: 2px;
-    animation: wave 0.8s ease-in-out infinite;
-    box-shadow: 0 0 6px rgba(0,220,255,0.8);
-  }
-  .wave-bar:nth-child(1){height:8px;animation-delay:0s}
-  .wave-bar:nth-child(2){height:16px;animation-delay:0.1s}
-  .wave-bar:nth-child(3){height:24px;animation-delay:0.2s}
-  .wave-bar:nth-child(4){height:32px;animation-delay:0.15s}
-  .wave-bar:nth-child(5){height:20px;animation-delay:0.25s}
-  .wave-bar:nth-child(6){height:28px;animation-delay:0.05s}
-  .wave-bar:nth-child(7){height:14px;animation-delay:0.3s}
-  @keyframes wave {
-    0%,100% { transform: scaleY(0.4); opacity: 0.6; }
-    50% { transform: scaleY(1); opacity: 1; }
-  }
-
-  /* Thinking dots */
-  .think-container {
-    position: absolute;
-    bottom: 38%; left: 50%;
-    transform: translateX(-50%);
-    display: flex; align-items: center; gap: 6px;
-    opacity: 0; transition: opacity 0.3s; z-index: 10;
-  }
-  .think-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: rgba(0,220,255,0.9);
-    box-shadow: 0 0 8px rgba(0,220,255,0.8);
-    animation: think-bounce 1.2s ease-in-out infinite;
-  }
-  .think-dot:nth-child(1){animation-delay:0s}
-  .think-dot:nth-child(2){animation-delay:0.2s}
-  .think-dot:nth-child(3){animation-delay:0.4s}
-  @keyframes think-bounce {
-    0%,100% { transform: translateY(0); opacity: 0.4; }
-    50% { transform: translateY(-8px); opacity: 1; }
-  }
-
-  /* Listen ring */
-  .listen-ring {
-    position: absolute;
-    width: 180px; height: 180px;
-    border-radius: 50%;
-    top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    border: 2px solid rgba(0,255,150,0.6);
-    opacity: 0; transition: opacity 0.3s;
-    animation: listen-pulse 1s ease-out infinite;
-  }
-  @keyframes listen-pulse {
-    0% { transform: translate(-50%,-50%) scale(1); opacity: 0.8; }
-    100% { transform: translate(-50%,-50%) scale(1.4); opacity: 0; }
-  }
-
-  /* State classes */
-  .state-listening .orb {
-    box-shadow: 0 0 50px rgba(0,255,150,0.4), 0 0 100px rgba(0,255,150,0.2), inset 0 0 50px rgba(0,255,150,0.1);
-    border-color: rgba(0,255,150,0.5);
-    animation: none;
-  }
+  .status-dot.listening { background: #00ff88; box-shadow: 0 0 10px #00ff88; animation: pdot 0.8s infinite; }
+  .status-dot.thinking { background: #4488ff; box-shadow: 0 0 8px #4488ff; animation: pdot 1s infinite; }
+  .status-dot.speaking { background: #00c8ff; box-shadow: 0 0 10px #00c8ff; animation: pdot 0.6s infinite; }
+  @keyframes pdot { 0%,100%{opacity:0.4}50%{opacity:1} }
+  .clock { font-size: 10px; letter-spacing: 2px; color: rgba(0,200,255,0.3); }
+  .orb-wrapper { position: relative; width: 200px; height: 200px; margin-bottom: 40px; cursor: pointer; user-select: none; }
+  .ring { position: absolute; border-radius: 50%; border: 1px solid rgba(0,200,255,0.12); top: 50%; left: 50%; transform: translate(-50%,-50%); animation: rpulse 3s ease-in-out infinite; transition: all 0.4s; }
+  .ring-1{width:240px;height:240px} .ring-2{width:280px;height:280px;animation-delay:0.5s;border-color:rgba(0,200,255,0.07)} .ring-3{width:320px;height:320px;animation-delay:1s;border-color:rgba(0,200,255,0.04)}
+  @keyframes rpulse{0%,100%{opacity:0.3;transform:translate(-50%,-50%) scale(1)}50%{opacity:0.8;transform:translate(-50%,-50%) scale(1.02)}}
+  .orb { position: absolute; width: 180px; height: 180px; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%,-50%); background: radial-gradient(circle at 35% 35%, rgba(0,220,255,0.4) 0%, rgba(0,150,200,0.2) 30%, rgba(0,50,100,0.8) 65%, rgba(0,10,30,0.95) 100%); box-shadow: 0 0 40px rgba(0,200,255,0.3), 0 0 80px rgba(0,200,255,0.15), inset 0 0 40px rgba(0,200,255,0.1); border: 1px solid rgba(0,200,255,0.4); transition: all 0.4s ease; animation: breathe 4s ease-in-out infinite; overflow: hidden; }
+  .orb::before { content: ''; position: absolute; width: 60%; height: 40%; background: radial-gradient(ellipse, rgba(255,255,255,0.15) 0%, transparent 70%); top: 15%; left: 15%; border-radius: 50%; filter: blur(8px); }
+  .orb::after { content: ''; position: absolute; inset: -50%; background: conic-gradient(from 0deg, transparent 0deg, rgba(0,200,255,0.1) 60deg, transparent 120deg, rgba(0,150,255,0.05) 180deg, transparent 240deg, rgba(0,200,255,0.08) 300deg, transparent 360deg); animation: spin 8s linear infinite; border-radius: 50%; }
+  @keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.04)}}
+  @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  .wave-container { position: absolute; bottom: 35%; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 3px; opacity: 0; transition: opacity 0.3s; z-index: 10; }
+  .wave-bar { width: 3px; background: rgba(0,220,255,0.9); border-radius: 2px; animation: wave 0.8s ease-in-out infinite; box-shadow: 0 0 6px rgba(0,220,255,0.8); }
+  .wave-bar:nth-child(1){height:8px;animation-delay:0s} .wave-bar:nth-child(2){height:16px;animation-delay:0.1s} .wave-bar:nth-child(3){height:24px;animation-delay:0.2s} .wave-bar:nth-child(4){height:32px;animation-delay:0.15s} .wave-bar:nth-child(5){height:20px;animation-delay:0.25s} .wave-bar:nth-child(6){height:28px;animation-delay:0.05s} .wave-bar:nth-child(7){height:14px;animation-delay:0.3s}
+  @keyframes wave{0%,100%{transform:scaleY(0.4);opacity:0.6}50%{transform:scaleY(1);opacity:1}}
+  .think-container { position: absolute; bottom: 38%; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 6px; opacity: 0; transition: opacity 0.3s; z-index: 10; }
+  .think-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(0,220,255,0.9); box-shadow: 0 0 8px rgba(0,220,255,0.8); animation: tbounce 1.2s ease-in-out infinite; }
+  .think-dot:nth-child(1){animation-delay:0s} .think-dot:nth-child(2){animation-delay:0.2s} .think-dot:nth-child(3){animation-delay:0.4s}
+  @keyframes tbounce{0%,100%{transform:translateY(0);opacity:0.4}50%{transform:translateY(-8px);opacity:1}}
+  .listen-ring { position: absolute; width: 180px; height: 180px; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%,-50%); border: 2px solid rgba(0,255,150,0.6); opacity: 0; transition: opacity 0.3s; animation: lpulse 1s ease-out infinite; }
+  @keyframes lpulse{0%{transform:translate(-50%,-50%) scale(1);opacity:0.8}100%{transform:translate(-50%,-50%) scale(1.4);opacity:0}}
+  .state-listening .orb { box-shadow: 0 0 50px rgba(0,255,150,0.4), 0 0 100px rgba(0,255,150,0.2), inset 0 0 50px rgba(0,255,150,0.1); border-color: rgba(0,255,150,0.5); animation: none; }
   .state-listening .listen-ring { opacity: 1; }
-  .state-listening .ring { animation-duration: 1.5s; }
-
-  .state-thinking .orb {
-    box-shadow: 0 0 40px rgba(100,100,255,0.4), 0 0 80px rgba(100,100,255,0.2), inset 0 0 40px rgba(100,100,255,0.1);
-    border-color: rgba(150,150,255,0.5);
-    animation: none;
-  }
+  .state-thinking .orb { box-shadow: 0 0 40px rgba(100,100,255,0.4), 0 0 80px rgba(100,100,255,0.2), inset 0 0 40px rgba(100,100,255,0.1); border-color: rgba(150,150,255,0.5); animation: none; }
   .state-thinking .think-container { opacity: 1; }
-  .state-thinking .orb::after { animation-duration: 2s; }
-
-  .state-speaking .orb {
-    box-shadow: 0 0 60px rgba(0,200,255,0.5), 0 0 120px rgba(0,200,255,0.25), inset 0 0 60px rgba(0,200,255,0.2);
-    animation: none;
-  }
+  .state-speaking .orb { box-shadow: 0 0 60px rgba(0,200,255,0.5), 0 0 120px rgba(0,200,255,0.25), inset 0 0 60px rgba(0,200,255,0.2); animation: none; }
   .state-speaking .wave-container { opacity: 1; }
-  .state-speaking .ring { animation-duration: 1.2s; }
-
-  /* Label */
-  .state-label {
-    font-size: 10px;
-    letter-spacing: 4px;
-    color: rgba(0,200,255,0.4);
-    text-transform: uppercase;
-    margin-bottom: 24px;
-    transition: all 0.3s;
-    min-height: 16px;
-  }
-
-  /* Transcript */
-  .transcript {
-    font-size: 13px;
-    color: rgba(0,200,255,0.7);
-    text-align: center;
-    max-width: 320px;
-    min-height: 48px;
-    line-height: 1.6;
-    letter-spacing: 0.3px;
-    padding: 0 20px;
-    transition: all 0.4s;
-  }
-
-  /* Tap hint */
-  .tap-hint {
-    position: fixed;
-    bottom: 40px;
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: rgba(0,200,255,0.2);
-    text-transform: uppercase;
-    transition: all 0.3s;
-  }
-
-  /* Recording indicator */
-  .rec-indicator {
-    position: fixed;
-    top: 56px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: rgba(0,255,100,0.6);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .rec-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: #00ff88;
-    animation: pulse-dot 0.6s infinite;
-  }
+  .state-label { font-size: 10px; letter-spacing: 4px; color: rgba(0,200,255,0.4); text-transform: uppercase; margin-bottom: 24px; transition: all 0.3s; min-height: 16px; }
+  .transcript { font-size: 13px; color: rgba(0,200,255,0.7); text-align: center; max-width: 320px; min-height: 60px; line-height: 1.6; letter-spacing: 0.3px; padding: 0 20px; transition: all 0.4s; }
+  .tap-hint { position: fixed; bottom: 40px; font-size: 10px; letter-spacing: 3px; color: rgba(0,200,255,0.2); text-transform: uppercase; }
+  .clear-btn { position: fixed; bottom: 24px; right: 24px; font-size: 9px; letter-spacing: 2px; color: rgba(0,200,255,0.2); background: transparent; border: 1px solid rgba(0,200,255,0.1); padding: 5px 10px; cursor: pointer; transition: all 0.2s; }
+  .clear-btn:hover { color: rgba(0,200,255,0.5); border-color: rgba(0,200,255,0.3); }
+  .rec-indicator { position: fixed; top: 56px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: 2px; color: rgba(0,255,100,0.6); opacity: 0; transition: opacity 0.3s; }
+  .rec-dot { width: 6px; height: 6px; border-radius: 50%; background: #00ff88; animation: pdot 0.6s infinite; }
 </style>
 </head>
 <body>
-
 <div class="corner corner-tl"></div>
 <div class="corner corner-tr"></div>
 <div class="corner corner-bl"></div>
 <div class="corner corner-br"></div>
-
 <div class="top-bar">
   <div class="brand">JARVIS</div>
   <div class="status-dot" id="status-dot"></div>
   <div class="clock" id="clock">--:--</div>
 </div>
-
-<div class="rec-indicator" id="rec-indicator">
-  <div class="rec-dot"></div>
-  <span>RECORDING</span>
-</div>
-
+<div class="rec-indicator" id="rec-indicator"><div class="rec-dot"></div><span>RECORDING</span></div>
 <div class="state-label" id="state-label">Tap to speak</div>
-
 <div class="orb-wrapper" id="orb-wrapper" onclick="handleTap()">
-  <div class="ring ring-1"></div>
-  <div class="ring ring-2"></div>
-  <div class="ring ring-3"></div>
+  <div class="ring ring-1"></div><div class="ring ring-2"></div><div class="ring ring-3"></div>
   <div class="listen-ring"></div>
   <div class="orb" id="orb">
-    <div class="wave-container">
-      <div class="wave-bar"></div><div class="wave-bar"></div>
-      <div class="wave-bar"></div><div class="wave-bar"></div>
-      <div class="wave-bar"></div><div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-    </div>
-    <div class="think-container">
-      <div class="think-dot"></div>
-      <div class="think-dot"></div>
-      <div class="think-dot"></div>
-    </div>
+    <div class="wave-container"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div>
+    <div class="think-container"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
   </div>
 </div>
-
 <div class="transcript" id="transcript">Hey Talha. Tap the orb and speak.</div>
 <div class="tap-hint" id="tap-hint">TAP ORB TO SPEAK</div>
+<button class="clear-btn" onclick="clearSession()">New Chat</button>
 
 <script>
-  // Clock
+  // Generate unique session ID for this browser session
+  const SESSION_ID = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
   function updateClock() {
     const now = new Date();
-    document.getElementById('clock').textContent =
-      now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+    document.getElementById('clock').textContent = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   }
   setInterval(updateClock, 1000);
   updateClock();
 
-  // State management
   const wrapper = document.getElementById('orb-wrapper');
   const label   = document.getElementById('state-label');
   const dot     = document.getElementById('status-dot');
@@ -359,21 +100,22 @@
 
   function setState(state, text) {
     wrapper.className = 'orb-wrapper state-' + state;
-    const labels = { idle:'Tap to speak', listening:'Listening...', thinking:'Thinking...', speaking:'Speaking' };
+    const labels = {idle:'Tap to speak', listening:'Listening...', thinking:'Thinking...', speaking:'Speaking'};
     label.textContent = labels[state] || state;
-    dot.className = 'status-dot ' + (state === 'idle' ? 'ready' : state);
-    rec.style.opacity = state === 'listening' ? '1' : '0';
-    hint.style.opacity = state === 'idle' ? '1' : '0';
+    dot.className = 'status-dot ' + (state==='idle'?'ready':state);
+    rec.style.opacity = state==='listening'?'1':'0';
+    hint.style.opacity = state==='idle'?'1':'0';
     if (text) document.getElementById('transcript').textContent = text;
   }
 
-  // Audio recording
   let mediaRecorder = null;
   let audioChunks   = [];
   let isRecording   = false;
   let stream        = null;
+  let isBusy        = false;
 
   async function handleTap() {
+    if (isBusy) return;
     if (isRecording) {
       stopRecording();
     } else {
@@ -383,20 +125,15 @@
 
   async function startRecording() {
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder  = new MediaRecorder(stream);
-      audioChunks    = [];
-      isRecording    = true;
-
+      stream        = await navigator.mediaDevices.getUserMedia({audio: true});
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks   = [];
+      isRecording   = true;
       mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
       mediaRecorder.onstop = processAudio;
       mediaRecorder.start();
-
       setState('listening', 'Listening...');
-
-      // Auto-stop after 15 seconds
       setTimeout(() => { if (isRecording) stopRecording(); }, 15000);
-
     } catch(e) {
       setState('idle', 'Mic access denied. Check browser permissions.');
     }
@@ -412,76 +149,89 @@
   }
 
   async function processAudio() {
+    isBusy = true;
     try {
-      // Send to Deepgram
-      const blob     = new Blob(audioChunks, { type: 'audio/webm' });
+      const blob     = new Blob(audioChunks, {type: 'audio/webm'});
       const arrayBuf = await blob.arrayBuffer();
 
       setState('thinking', 'Transcribing...');
 
       const transcribeRes = await fetch('/transcribe', {
         method: 'POST',
-        headers: { 'Content-Type': 'audio/webm' },
+        headers: {'Content-Type': 'audio/webm'},
         body: arrayBuf
       });
-
       const transcribeData = await transcribeRes.json();
-      const transcript = transcribeData.transcript;
+      const transcript     = transcribeData.transcript;
 
       if (!transcript) {
         setState('idle', "Didn't catch that. Tap to try again.");
+        isBusy = false;
         return;
       }
 
       document.getElementById('transcript').textContent = 'You: ' + transcript;
       setState('thinking', 'Thinking...');
 
-      // Send to Claude
       const chatRes = await fetch('/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: transcript })
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: transcript, session_id: SESSION_ID})
       });
-
       const chatData = await chatRes.json();
-      const reply = chatData.reply;
+      const reply    = chatData.reply;
 
       if (!reply) {
         setState('idle', 'Something went wrong. Try again.');
+        isBusy = false;
         return;
       }
 
       setState('speaking', reply);
 
-      // Get ElevenLabs audio
       const speakRes = await fetch('/speak', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: reply })
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({text: reply})
       });
 
       if (speakRes.ok) {
         const audioBlob = await speakRes.blob();
         const audioUrl  = URL.createObjectURL(audioBlob);
         const audio     = new Audio(audioUrl);
-        audio.onended   = () => {
+        audio.onended = () => {
           setState('idle', reply);
           URL.revokeObjectURL(audioUrl);
+          isBusy = false;
+        };
+        audio.onerror = () => {
+          setState('idle', reply);
+          isBusy = false;
         };
         audio.play();
       } else {
-        // Fallback to browser TTS
         const utterance = new SpeechSynthesisUtterance(reply);
-        utterance.onend = () => setState('idle', reply);
+        utterance.onend = () => { setState('idle', reply); isBusy = false; };
         speechSynthesis.speak(utterance);
       }
 
     } catch(e) {
       setState('idle', 'Error: ' + e.message);
+      isBusy = false;
     }
   }
 
-  // Init
+  async function clearSession() {
+    try {
+      await fetch('/clear', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({session_id: SESSION_ID})
+      });
+      setState('idle', 'Fresh start. Tap to speak.');
+    } catch(e) {}
+  }
+
   setState('idle');
 </script>
 </body>
